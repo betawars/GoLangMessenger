@@ -14,4 +14,6 @@ go get -u gorm.io/gorm - Get GORM
 
 go get -u gorm.io/driver/postgres - Get Postgres
 
-CompileDaemon -command="./[proj_name]" - to run the .go file
+CompileDaemon -command="./[proj_name].exe" - to run the .go file
+
+Easiest postgreSQL would be Elephant SQL
