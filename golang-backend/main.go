@@ -17,6 +17,16 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	r.POST("/posts", controllers.CreatePosts)
+	// This endpoint is to create a post in the database
+	r.POST("/createPost", controllers.CreatePosts)
+	// This endpoint is to get all the data in the database
+	r.GET("/getPosts", controllers.GetPosts)
+	// This enpoint is to get data with a particular id from the database
+	r.GET("/getPost/:id", controllers.GetPost)
+	// This endpoint is to update the existing posts from the database
+	r.PUT("/updatePost/:id", controllers.UpdatePost)
+	// This endpoint is to delete a record from the database
+	r.DELETE("deletePost/:id", controllers.DeletePost)
+
 	r.Run()
 }
