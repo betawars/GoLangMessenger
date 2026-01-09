@@ -13,10 +13,15 @@ func init() {
 	fmt.Println("-----------------------------------------------------------START'S HERE-------------------------------------------------------------")
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDB()
+
 }
 
 func main() {
+
 	r := gin.Default()
+
+	// ///////////////////////////////////////////////////Code for CRUD operations//////////////////////////////////////////////////////
+	// The table used over here is the "posts" table
 	// This endpoint is to create a post in the database
 	r.POST("/createPost", controllers.CreatePosts)
 	// This endpoint is to get all the data in the database
@@ -27,6 +32,11 @@ func main() {
 	r.PUT("/updatePost/:id", controllers.UpdatePost)
 	// This endpoint is to delete a record from the database
 	r.DELETE("deletePost/:id", controllers.DeletePost)
+
+	///////////////////////////////////////////////////////Code for JWT///////////////////////////////////////////////////////////////
+	// The table used over here is the "users" table
+	// This endpoint is to create new User in the Users table
+	r.POST("/signUp", controllers.SignUp)
 
 	r.Run()
 }
