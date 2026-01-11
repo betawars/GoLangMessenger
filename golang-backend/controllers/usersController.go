@@ -3,11 +3,14 @@ package controllers
 import (
 	"errors"
 	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	"github.com/betawars/GoLangMessenger/golang-backend/initializers"
 	"github.com/betawars/GoLangMessenger/golang-backend/models"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -78,4 +81,67 @@ func SignUp(c *gin.Context) {
 		"information": "User Created Successfully!",
 	})
 
+}
+
+func Login(c *gin.Context) {
+
+	//  Get email and pass from the req body
+	var body struct {
+		Email    string
+		Password string
+	}
+
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Failed to read body",
+		})
+	}
+
+	// Look up for the requested user
+	var user models.User
+	initializers.DB.Where("email = ?", body.Email).First(&user)
+
+	if user.ID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid Email or Password",
+		})
+		return
+	}
+
+	// Compare the user with pass
+
+	storedPassword := user.Password
+	bodyPassword := body.Password
+
+	err := bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(bodyPassword))
+
+	if err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"information": "Incorrect Password!",
+			"details":     err.Error(),
+		})
+	}
+
+	// Generate the JWT Token
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"subject": user.ID,
+		"expire":  time.Now().Add(time.Hour * 24 * 30).Unix(),
+	})
+
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRET")))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Failed to create token",
+			"errInfo": err.Error(),
+		})
+		return
+	}
+
+	// Send it back
+	c.JSON(http.StatusOK, gin.H{
+		"token": tokenString,
+	})
 }
