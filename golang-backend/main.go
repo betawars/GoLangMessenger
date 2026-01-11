@@ -38,5 +38,8 @@ func main() {
 	// This endpoint is to create new User in the Users table
 	r.POST("/signUp", controllers.SignUp)
 
+	// This endpoint is to check if the user exists in the Users table
+	r.POST("/login", controllers.Login)
+
 	r.Run()
 }
