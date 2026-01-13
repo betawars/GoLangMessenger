@@ -5,6 +5,7 @@ import (
 
 	"github.com/betawars/GoLangMessenger/golang-backend/controllers"
 	"github.com/betawars/GoLangMessenger/golang-backend/initializers"
+	"github.com/betawars/GoLangMessenger/golang-backend/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,9 +38,10 @@ func main() {
 	// The table used over here is the "users" table
 	// This endpoint is to create new User in the Users table
 	r.POST("/signUp", controllers.SignUp)
-
 	// This endpoint is to check if the user exists in the Users table
 	r.POST("/login", controllers.Login)
+	// TODO Doc
+	r.GET("/validate", middleware.RequireAuth, controllers.Validate)
 
 	r.Run()
 }
