@@ -140,8 +140,18 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	//In these 2 lines, I am setting the token string as the cookie
+	// In the set cookie, the format is "cookie name", "cookie value", time for which the cookie exists,
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 	// Send it back
+	c.JSON(http.StatusOK, gin.H{})
+}
+
+func Validate(c *gin.Context) {
+
+	user, _ := c.Get("user")
 	c.JSON(http.StatusOK, gin.H{
-		"token": tokenString,
+		"message": user,
 	})
 }
